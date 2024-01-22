@@ -58,7 +58,7 @@ router.get("/products/:productId", async (req, res) => {
 });
 
 // 상품 정보 수정
-router.patch("/products/:productId", async (req, res) => {
+router.put("/products/:productId", async (req, res) => {
   try {
     const { productId } = req.params;
     const { name, description, status, password } = req.body;
@@ -80,7 +80,6 @@ router.patch("/products/:productId", async (req, res) => {
     }
 
     await product.save();
-
     
     const updatedProduct = {
       name: product.name,
