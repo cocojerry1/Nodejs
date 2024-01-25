@@ -4,12 +4,15 @@ import Product from "../schemas/todos.schemas.js";
 
 import bcrypt from "bcrypt";
 
+import { asyncMiddleware } from '../middlewares/error-handler.middleware.js';
+
+
 const router = express.Router();
 
 
 // 상품등록
-router.post("/products", async (req, res) => {
-  try {
+router.post("/products", asyncMiddleware(async (req, res) => {
+
     const { name, description, author, password } = req.body;
 
     if (!name || !description || !author || !password) {
@@ -27,24 +30,18 @@ router.post("/products", async (req, res) => {
     await product.save();
 
     return res.status(201).json({ product });
-  } catch (error) {
-    res.status(500).json({ errorMessage: "서버 오류" });
-  }
-});
+  }));
 
 // 상품목록조회
-router.get("/products", async (req, res) => {
-  try {
+router.get("/products", asyncMiddleware(async (req, res) =>  {
+
     const products = await Product.find().select('name author status createdAt').sort("-createdAt");
     return res.status(200).json({ products });
-  } catch (error) {
-    res.status(500).json({ errorMessage: "서버 오류" });
-  }
-});
+  }));
 
 // 상세조회
-router.get("/products/:productId", async (req, res) => {
-  try {
+router.get("/products/:productId", asyncMiddleware(async (req, res) =>{
+  
     const { productId } = req.params;
     const product = await Product.findById(productId).select('-password');
     if (!product) {
@@ -52,14 +49,11 @@ router.get("/products/:productId", async (req, res) => {
     }
 
     return res.status(200).json({ product });
-  } catch (error) {
-    res.status(500).json({ errorMessage: "서버 오류" });
-  }
-});
+  }));
 
 // 상품 정보 수정
-router.put("/products/:productId", async (req, res) => {
-  try {
+router.patch("/products/:productId", asyncMiddleware(async (req, res) =>  {
+
     const { productId } = req.params;
     const { name, description, status, password } = req.body;
 
@@ -89,14 +83,10 @@ router.put("/products/:productId", async (req, res) => {
     };
 
     return res.status(200).json({ updatedProduct });
-  } catch (error) {
-    res.status(500).json({ errorMessage: "서버 오류" });
-  }
-});
-
+  }));
 // 삭제
-router.delete("/products/:productId", async (req, res) => {
-  try {
+router.delete("/products/:productId", asyncMiddleware(async (req, res) => {
+  
     const { productId } = req.params;
     const { password } = req.body;
 
@@ -116,9 +106,6 @@ router.delete("/products/:productId", async (req, res) => {
 
     await Product.deleteOne({ _id: productId });
     return res.status(200).json({});
-  } catch (error) {
-    res.status(500).json({ errorMessage: "서버 오류" });
-  }
-});
+  }));
 
 export default router;
