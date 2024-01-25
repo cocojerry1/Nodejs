@@ -8,7 +8,8 @@ import { asyncMiddleware } from '../middlewares/error-handler.middleware.js';
 
 
 const router = express.Router();
-
+const FOR_SALE = "FOR_SALE";
+ const SOLD_OUT = "SOLD_OUT";
 
 // 상품등록
 router.post("/products", asyncMiddleware(async (req, res) => {
@@ -25,7 +26,7 @@ router.post("/products", asyncMiddleware(async (req, res) => {
       description,
       author,
       password: hashedPassword,
-      status: "FOR_SALE" 
+      status: FOR_SALE
     });
     await product.save();
 
